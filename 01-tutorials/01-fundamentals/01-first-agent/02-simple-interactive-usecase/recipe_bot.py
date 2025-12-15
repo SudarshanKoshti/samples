@@ -10,6 +10,22 @@ logging.getLogger("strands").setLevel(
     logging.INFO
 )  # Set to DEBUG for more detailed logs
 
+from dotenv import load_dotenv
+load_dotenv()
+import os
+from strands import Agent
+from strands.models.litellm import LiteLLMModel
+
+model = LiteLLMModel(
+    client_args={
+        "api_key":os.getenv('COHERE_API_KEY')
+    },
+    model_id="cohere_chat/command-a-03-2025",
+    params={
+        'temperature':0.5
+    }
+)
+
 
 # Define a websearch tool
 @tool
@@ -40,6 +56,7 @@ recipe_agent = Agent(
     system_prompt="""You are RecipeBot, a helpful cooking assistant.
     Help users find recipes based on ingredients and answer cooking questions.
     Use the websearch tool to find recipes when users mention ingredients or to look up cooking information.""",
+    model=model,
     tools=[websearch],
 )
 
